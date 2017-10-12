@@ -1,0 +1,68 @@
+{
+  "name" : "simple-region-growing",
+  "version" : "v1_0_0",
+  "queue" : "simple-region-growing--v1_0_0",
+  "parameters" : {
+    "inputSeries" : {
+      "label" : "Input Series",
+      "description" : "The series to segment with region growing.",
+      "type" : "series",
+      "default" : ""
+    },
+    "seedPoint" : {
+              "label":"Seed Point",
+              "description":"Seed point inside the region to segment.",
+              "type":"voxelIndex",
+              "default":[0,0,0]
+    },
+    "required": ["inputSeries", "seedPoint"]
+  },
+  "results" : {
+    "outputSeries" : {
+      "label" : "Segmentation",
+      "description" : "The segmented region series.",
+      "type" : "series"
+    }
+  },
+  "result_display" : {
+    "grid" : {
+      "shape" : [1,1],
+      "rows" : [1.0],
+      "columns" : [1.0]
+    },
+    "cells" : [
+      {
+        "row" : 0,
+        "column" : 0,
+        "cellType" : "image",
+        "source" : "context",
+        "parameter" : "inputSeries",
+        "cellDisplayMode" : "background"
+      },
+      {
+        "row" : 0,
+        "column" : 0,
+        "cellType" : "image",
+        "source" : "result",
+        "parameter" : "outputSeries",
+        "cellDisplayMode" : "background",
+        "properties" : {
+            "color" : "rgb(144,238,144)",
+            "opacity" : 0.7
+        },
+        "controls": {
+             "opacity": "Segmentation Opacity: ",
+             "color": "Segmentation Color: "
+        }
+      }
+    ]
+  },
+  "api" : {
+    "context" : "none"
+  },
+  "doc" : {
+    "short" : "A simple region growing algorithm based on ITK",
+    "full" : "Full documentation:"
+  },
+  "classification" : "radiology-image-segmentation"
+}
