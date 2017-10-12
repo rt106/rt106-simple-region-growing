@@ -167,6 +167,27 @@ int main( int argc, char *argv[])
   confidenceConnectedFilter->SetSeed(seed);
   confidenceConnectedFilter->SetInput(reader->GetOutput());
 
+
+  // use air and bone CT values for foreground and background
+	// air value: -1000, bone value +3000
+	// 2. replace the value 0, 255 to air -1000 and bone +3000
+
+	InternalImageType_3D::RegionType regionWholeImage =
+	  confidenceConnectedFilter->GetOutput()->GetLargestPossibleRegion();
+
+	itk::ImageRegionIterator<InternalImageType_3D> wholeImageIterator(confidenceConnectedFilter->GetOutput(), regionWholeImage);
+
+	const short maskThreshold = 1;
+	while(!wholeImageIterator.IsAtEnd()){
+	  if(wholeImageIterator.Get() < maskThreshold){
+	    wholeImageIterator.Set(-1000);
+	  }
+	  else{
+	    wholeImageIterator.Set(3000);
+	  }
+	  ++wholeImageIterator;
+	}
+
   //write out the bias corrected image
   itksys::SystemTools::MakeDirectory( argv[2] );
   SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
