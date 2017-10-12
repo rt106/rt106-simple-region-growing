@@ -166,16 +166,17 @@ int main( int argc, char *argv[])
   std::cerr << "Final Seed Coordinate Z: " << seed[2] << std::endl;
   confidenceConnectedFilter->SetSeed(seed);
   confidenceConnectedFilter->SetInput(reader->GetOutput());
-
+  confidenceConnectedFilter->Update();
 
   // use air and bone CT values for foreground and background
 	// air value: -1000, bone value +3000
 	// 2. replace the value 0, 255 to air -1000 and bone +3000
+  InternalImageType_3D::Pointer segmentationLabelMap = confidenceConnectedFilter->GetOutput();
 
 	InternalImageType_3D::RegionType regionWholeImage =
-	  confidenceConnectedFilter->GetOutput()->GetLargestPossibleRegion();
+	  segmentationLabelMap->GetLargestPossibleRegion();
 
-	itk::ImageRegionIterator<InternalImageType_3D> wholeImageIterator(confidenceConnectedFilter->GetOutput(), regionWholeImage);
+	itk::ImageRegionIterator<InternalImageType_3D> wholeImageIterator(segmentationLabelMap, regionWholeImage);
 
 	const short maskThreshold = 1;
 	while(!wholeImageIterator.IsAtEnd()){
@@ -191,7 +192,7 @@ int main( int argc, char *argv[])
   //write out the bias corrected image
   itksys::SystemTools::MakeDirectory( argv[2] );
   SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
-  seriesWriter->SetInput( confidenceConnectedFilter->GetOutput() );
+  seriesWriter->SetInput( segmentationLabelMap );
 
   namesGenerator->SetOutputDirectory( argv[2] );
   const ReaderType::FileNamesContainer & outputFilenames = namesGenerator->GetOutputFileNames();
