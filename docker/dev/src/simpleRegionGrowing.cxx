@@ -21,6 +21,7 @@
 #include <sstream>
 #include "itkTimeProbe.h"
 #include "itkPNGImageIO.h"
+#include "itkStatisticsImageFilter.h"
 
 // string
 #include <string>
@@ -189,6 +190,17 @@ int main( int argc, char *argv[])
 	  ++wholeImageIterator;
 	}
 
+  // print max and min voxel intensity value
+  typedef itk::StatisticsImageFilter<InternalImageType_3D> StatisticsImageFilterType;
+  StatisticsImageFilterType::Pointer statisticsImageFilter
+          = StatisticsImageFilterType::New ();
+  statisticsImageFilter->SetInput(segmentationLabelMap);
+  statisticsImageFilter->Update();
+  std::cout << std::endl;
+  std::cout << "Segmentation binary label map intensity range: " <<
+  "Min: " << statisticsImageFilter->GetMinimum() <<
+  ", Max: " << statisticsImageFilter->GetMaximum() << std::endl;
+
   //write out the bias corrected image
   itksys::SystemTools::MakeDirectory( argv[2] );
   SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
@@ -218,5 +230,6 @@ int main( int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
+  std::cout << "Simple Region Growing is done." << std::endl;
   return EXIT_SUCCESS;
 }
