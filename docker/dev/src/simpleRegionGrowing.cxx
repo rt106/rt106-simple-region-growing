@@ -46,54 +46,54 @@ int main( int argc, char *argv[])
 
   /* ============================== Type & Filter Definitions ============================== */
   typedef float InternalPixelType;
-	const unsigned int InputDimension = 3;
-	typedef itk::Image< InternalPixelType, InputDimension > InternalImageType_3D;
-	typedef itk::ImageSeriesReader< InternalImageType_3D > ReaderType;
-	typedef itk::GDCMImageIO							 ImageIOType;
-	typedef itk::GDCMSeriesFileNames					 NamesGeneratorType;
+  const unsigned int InputDimension = 3;
+  typedef itk::Image< InternalPixelType, InputDimension > InternalImageType_3D;
+  typedef itk::ImageSeriesReader< InternalImageType_3D > ReaderType;
+  typedef itk::GDCMImageIO							 ImageIOType;
+  typedef itk::GDCMSeriesFileNames					 NamesGeneratorType;
 
   //define output filter for writing series as DICOM images
-	typedef signed short OutputPixelType;
-	const unsigned int OutputDimension = 2;
-	typedef itk::Image< OutputPixelType, OutputDimension > OutputImageType_2D;
-	typedef itk::ImageSeriesWriter< InternalImageType_3D, OutputImageType_2D > SeriesWriterType;
+  typedef signed short OutputPixelType;
+  const unsigned int OutputDimension = 2;
+  typedef itk::Image< OutputPixelType, OutputDimension > OutputImageType_2D;
+  typedef itk::ImageSeriesWriter< InternalImageType_3D, OutputImageType_2D > SeriesWriterType;
 
   //define vectors for storing image sizes, etc.
-	typedef itk::Vector<double, 3> VectorType;
-	typedef itk::Vector<int, 3> VectorTypeInt;
-	std::vector<float> maskPixelValues_shrunk; //vector to store pixel values corresponding to mask == 1
+  typedef itk::Vector<double, 3> VectorType;
+  typedef itk::Vector<int, 3> VectorTypeInt;
+  std::vector<float> maskPixelValues_shrunk; //vector to store pixel values corresponding to mask == 1
 
   /* ============================== Read DICOM Images ============================== */
-	std::cerr << "Reading images..." << std::endl;
-	std::cerr << std::endl;
+  std::cerr << "Reading images..." << std::endl;
+  std::cerr << std::endl;
 
-	//get and check # of input files & filenames
-	NamesGeneratorType::Pointer namesGenerator = NamesGeneratorType::New();
-	namesGenerator->SetInputDirectory( argv[1] );
-	const ReaderType::FileNamesContainer & inputFilenames = namesGenerator->GetInputFileNames();
-	unsigned int numberOfInputFilenames =  inputFilenames.size();
-	std::cerr << "Total # of files in Input Dicom Directory: " << numberOfInputFilenames << std::endl;
+  //get and check # of input files & filenames
+  NamesGeneratorType::Pointer namesGenerator = NamesGeneratorType::New();
+  namesGenerator->SetInputDirectory( argv[1] );
+  const ReaderType::FileNamesContainer & inputFilenames = namesGenerator->GetInputFileNames();
+  unsigned int numberOfInputFilenames =  inputFilenames.size();
+  std::cerr << "Total # of files in Input Dicom Directory: " << numberOfInputFilenames << std::endl;
 
   std::cerr << std::endl;
-	if(numberOfInputFilenames == 0)
-		return EXIT_FAILURE;
+  if(numberOfInputFilenames == 0)
+  	return EXIT_FAILURE;
 
-	//read in images
-	ImageIOType::Pointer gdcmIO = ImageIOType::New();
-	ReaderType::Pointer reader = ReaderType::New();
-	reader->SetImageIO( gdcmIO );
-	reader->SetFileNames( inputFilenames );
-	try
-	{
-		reader->Update();
-	}
-	catch (itk::ExceptionObject &excp)
-	{
-		std::cerr << "Exception thrown while reading the series!" << std::endl;
-		std::cerr << excp << std::endl;
-		return EXIT_FAILURE;
-	}
-
+  //read in images
+  ImageIOType::Pointer gdcmIO = ImageIOType::New();
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetImageIO( gdcmIO );
+  reader->SetFileNames( inputFilenames );
+  try
+  {
+  	reader->Update();
+  }
+  catch (itk::ExceptionObject &excp)
+  {
+  	std::cerr << "Exception thrown while reading the series!" << std::endl;
+  	std::cerr << excp << std::endl;
+  	return EXIT_FAILURE;
+  }
+  
   //define image properties (e.g., size and dimensions) to write out images correctly later
   InternalImageType_3D::RegionType inputRegion;
   InternalImageType_3D::IndexType inputImageIndex = reader->GetOutput()->GetLargestPossibleRegion().GetIndex();
