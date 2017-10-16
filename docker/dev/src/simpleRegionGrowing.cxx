@@ -153,9 +153,6 @@ int main( int argc, char *argv[])
       ++itr;
     }
 	}
-  // for(int i=0; i<inputFilenames.size(); i++){
-  //   std::cout << "dicome file name: " << inputFilenames[i] << std::endl;
-  // }
 
   // Set seed
   InternalImageType_3D::IndexType seed;
@@ -170,40 +167,6 @@ int main( int argc, char *argv[])
   confidenceConnectedFilter->Update();
   InternalImageType_3D::Pointer segmentationLabelMap = confidenceConnectedFilter->GetOutput();
 
-  /*
-  // use air and bone CT values for foreground and background
-	// air value: -1000, bone value +3000
-	// 2. replace the value 0, 255 to air -1000 and bone +3000
-  InternalImageType_3D::Pointer segmentationLabelMap = confidenceConnectedFilter->GetOutput();
-
-	InternalImageType_3D::RegionType regionWholeImage =
-	  segmentationLabelMap->GetLargestPossibleRegion();
-
-	itk::ImageRegionIterator<InternalImageType_3D> wholeImageIterator(segmentationLabelMap, regionWholeImage);
-
-	const short maskThreshold = 1;
-	while(!wholeImageIterator.IsAtEnd()){
-	  if(wholeImageIterator.Get() < maskThreshold){
-	    wholeImageIterator.Set(-1000);
-	  }
-	  else{
-	    wholeImageIterator.Set(3000);
-	  }
-	  ++wholeImageIterator;
-	}
-
-  // print max and min voxel intensity value
-  typedef itk::StatisticsImageFilter<InternalImageType_3D> StatisticsImageFilterType;
-  StatisticsImageFilterType::Pointer statisticsImageFilter
-          = StatisticsImageFilterType::New ();
-  statisticsImageFilter->SetInput(segmentationLabelMap);
-  statisticsImageFilter->Update();
-  std::cout << std::endl;
-  std::cout << "Segmentation binary label map intensity range: " <<
-  "Min: " << statisticsImageFilter->GetMinimum() <<
-  ", Max: " << statisticsImageFilter->GetMaximum() << std::endl;
-  */
-
   //write out the bias corrected image
   itksys::SystemTools::MakeDirectory( argv[2] );
   SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
@@ -216,11 +179,7 @@ int main( int argc, char *argv[])
   if(numberOfOutputFilenames == 0 || numberOfOutputFilenames != numberOfInputFilenames)
     return EXIT_FAILURE;
   seriesWriter->SetFileNames( outputFilenames );
-  // have to use this to save the modified DICOM tag
-  // this can fix the Series Number problem, but other tags are not kept
   seriesWriter->SetImageIO( gdcmIO );
-
-  // use this will keep all the original DICOM tags
   seriesWriter->SetMetaDataDictionaryArray( reader->GetMetaDataDictionaryArray() );
   try
   {
