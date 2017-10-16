@@ -122,7 +122,6 @@ int main( int argc, char *argv[])
   int frontEndIndex_z = atoi(argv[5]);
   int countIndexZ = 0;
   int itkIndexZ = 0;
-  bool breakWhileLoop = false;
   for( DictionaryArrayType::const_iterator it = dictionaryArrayPointer->begin(); it != dictionaryArrayPointer->end(); ++it) {
     DictionaryRawPointer drp = *it;
     DictionaryType::ConstIterator itr = drp->Begin();
@@ -138,15 +137,11 @@ int main( int argc, char *argv[])
           if (frontEndIndex_z == atoi(tagvalue.c_str())) {
             std::cout << tagkey <<  " = " << tagvalue << std::endl;
             std::cout << "===============" << std::endl;
-            breakWhileLoop = true;
             itkIndexZ = countIndexZ;
             break;
           }
           countIndexZ++;
         }
-      }
-      if(breakWhileLoop){
-        break;
       }
       ++itr;
     }
