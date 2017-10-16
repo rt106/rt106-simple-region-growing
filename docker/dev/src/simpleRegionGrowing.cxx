@@ -3,7 +3,6 @@
 #include "itkConfidenceConnectedImageFilter.h"
 #include "itksys/SystemTools.hxx"
 #include <sstream>
-// #include "QuickView.h"
 
 // DICOM series
 #include "itkGDCMImageIO.h"
@@ -21,7 +20,6 @@
 #include <sstream>
 #include "itkTimeProbe.h"
 #include "itkPNGImageIO.h"
-#include "itkStatisticsImageFilter.h"
 
 // string
 #include <string>
@@ -165,12 +163,11 @@ int main( int argc, char *argv[])
   confidenceConnectedFilter->SetSeed(seed);
   confidenceConnectedFilter->SetInput(reader->GetOutput());
   confidenceConnectedFilter->Update();
-  InternalImageType_3D::Pointer segmentationLabelMap = confidenceConnectedFilter->GetOutput();
 
   //write out the bias corrected image
   itksys::SystemTools::MakeDirectory( argv[2] );
   SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
-  seriesWriter->SetInput( segmentationLabelMap );
+  seriesWriter->SetInput( confidenceConnectedFilter->GetOutput() );
 
   namesGenerator->SetOutputDirectory( argv[2] );
   const ReaderType::FileNamesContainer & outputFilenames = namesGenerator->GetOutputFileNames();
