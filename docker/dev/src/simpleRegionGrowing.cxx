@@ -108,7 +108,7 @@ int main( int argc, char *argv[])
   confidenceConnectedFilter->SetInitialNeighborhoodRadius(3);
   confidenceConnectedFilter->SetMultiplier(3);
   confidenceConnectedFilter->SetNumberOfIterations(2);
-  confidenceConnectedFilter->SetReplaceValue(255);
+  confidenceConnectedFilter->SetReplaceValue(3000);
 
   // convert seed point
   typedef itk::MetaDataDictionary                  DictionaryType;
@@ -168,7 +168,9 @@ int main( int argc, char *argv[])
   confidenceConnectedFilter->SetSeed(seed);
   confidenceConnectedFilter->SetInput(reader->GetOutput());
   confidenceConnectedFilter->Update();
+  InternalImageType_3D::Pointer segmentationLabelMap = confidenceConnectedFilter->GetOutput();
 
+  /*
   // use air and bone CT values for foreground and background
 	// air value: -1000, bone value +3000
 	// 2. replace the value 0, 255 to air -1000 and bone +3000
@@ -200,6 +202,7 @@ int main( int argc, char *argv[])
   std::cout << "Segmentation binary label map intensity range: " <<
   "Min: " << statisticsImageFilter->GetMinimum() <<
   ", Max: " << statisticsImageFilter->GetMaximum() << std::endl;
+  */
 
   //write out the bias corrected image
   itksys::SystemTools::MakeDirectory( argv[2] );
