@@ -93,7 +93,7 @@ int main( int argc, char *argv[])
   	std::cerr << excp << std::endl;
   	return EXIT_FAILURE;
   }
-  
+
   //define image properties (e.g., size and dimensions) to write out images correctly later
   InternalImageType_3D::RegionType inputRegion;
   InternalImageType_3D::IndexType inputImageIndex = reader->GetOutput()->GetLargestPossibleRegion().GetIndex();
@@ -150,7 +150,7 @@ int main( int argc, char *argv[])
       }
       ++itr;
     }
-	}
+  }
 
   // Set seed
   InternalImageType_3D::IndexType seed;
