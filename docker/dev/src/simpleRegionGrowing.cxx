@@ -122,14 +122,14 @@ int main( int argc, char *argv[])
   int frontEndIndex_z = atoi(argv[5]);
   int countIndexZ = 0;
   int itkIndexZ = 0;
-  for( DictionaryArrayType::const_iterator it = dictionaryArrayPointer->begin(); it != dictionaryArrayPointer->end(); ++it) {
+  bool done = false;
+  for( DictionaryArrayType::const_iterator it = dictionaryArrayPointer->begin(); it != dictionaryArrayPointer->end() && !done ; ++it) {
     DictionaryRawPointer drp = *it;
     DictionaryType::ConstIterator itr = drp->Begin();
     DictionaryType::ConstIterator end = drp->End();
     while( itr != end ){
       itk::MetaDataObjectBase::Pointer entry = itr->second;
       MetaDataStringType::Pointer entryvalue = dynamic_cast<MetaDataStringType *>( entry.GetPointer() );
-
       if( entryvalue ){
         std::string tagkey = itr->first;
         std::string tagvalue = entryvalue->GetMetaDataObjectValue();
@@ -138,6 +138,7 @@ int main( int argc, char *argv[])
             std::cout << tagkey <<  " = " << tagvalue << std::endl;
             std::cout << "===============" << std::endl;
             itkIndexZ = countIndexZ;
+            done = true;
             break;
           }
           countIndexZ++;
