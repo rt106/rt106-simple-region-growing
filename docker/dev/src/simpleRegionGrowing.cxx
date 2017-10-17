@@ -44,7 +44,7 @@ int main( int argc, char *argv[])
     std::cerr << "Input Seed Coordinate Z: " << argv[5] << std::endl;
   }
 
-  /* ============================== Type & Filter Definitions ============================== */
+  //type and filter definitions
   typedef float InternalPixelType;
   const unsigned int InputDimension = 3;
   typedef itk::Image< InternalPixelType, InputDimension > InternalImageType_3D;
@@ -58,12 +58,6 @@ int main( int argc, char *argv[])
   typedef itk::Image< OutputPixelType, OutputDimension > OutputImageType_2D;
   typedef itk::ImageSeriesWriter< InternalImageType_3D, OutputImageType_2D > SeriesWriterType;
 
-  //define vectors for storing image sizes, etc.
-  typedef itk::Vector<double, 3> VectorType;
-  typedef itk::Vector<int, 3> VectorTypeInt;
-  std::vector<float> maskPixelValues_shrunk; //vector to store pixel values corresponding to mask == 1
-
-  /* ============================== Read DICOM Images ============================== */
   std::cerr << "Reading images..." << std::endl;
   std::cerr << std::endl;
 
@@ -108,7 +102,7 @@ int main( int argc, char *argv[])
   confidenceConnectedFilter->SetNumberOfIterations(2);
   confidenceConnectedFilter->SetReplaceValue(3000);
 
-  // convert seed point
+  //convert seed point
   typedef itk::MetaDataDictionary                  DictionaryType;
   typedef itk::MetaDataDictionary *                DictionaryRawPointer;
   typedef std::vector< DictionaryRawPointer > DictionaryArrayType;
@@ -148,7 +142,7 @@ int main( int argc, char *argv[])
     }
   }
 
-  // Set seed
+  //set seed
   InternalImageType_3D::IndexType seed;
   seed[0] = atoi(argv[3]);
   seed[1] = atoi(argv[4]);
@@ -160,7 +154,7 @@ int main( int argc, char *argv[])
   confidenceConnectedFilter->SetInput(reader->GetOutput());
   confidenceConnectedFilter->Update();
 
-  //write out the bias corrected image
+  //write out image segmentation result
   itksys::SystemTools::MakeDirectory( argv[2] );
   SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
   seriesWriter->SetInput( confidenceConnectedFilter->GetOutput() );
