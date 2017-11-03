@@ -3,7 +3,6 @@
 #include "itkConfidenceConnectedImageFilter.h"
 #include "itksys/SystemTools.hxx"
 #include <sstream>
-// #include "QuickView.h"
 
 // DICOM series
 #include "itkGDCMImageIO.h"
@@ -45,55 +44,49 @@ int main( int argc, char *argv[])
     std::cerr << "Input Seed Coordinate Z: " << argv[5] << std::endl;
   }
 
-  /* ============================== Type & Filter Definitions ============================== */
+  //type and filter definitions
   typedef float InternalPixelType;
-	const unsigned int InputDimension = 3;
-	typedef itk::Image< InternalPixelType, InputDimension > InternalImageType_3D;
-	typedef itk::ImageSeriesReader< InternalImageType_3D > ReaderType;
-	typedef itk::GDCMImageIO							 ImageIOType;
-	typedef itk::GDCMSeriesFileNames					 NamesGeneratorType;
+  const unsigned int InputDimension = 3;
+  typedef itk::Image< InternalPixelType, InputDimension > InternalImageType_3D;
+  typedef itk::ImageSeriesReader< InternalImageType_3D > ReaderType;
+  typedef itk::GDCMImageIO							 ImageIOType;
+  typedef itk::GDCMSeriesFileNames					 NamesGeneratorType;
 
   //define output filter for writing series as DICOM images
-	typedef signed short OutputPixelType;
-	const unsigned int OutputDimension = 2;
-	typedef itk::Image< OutputPixelType, OutputDimension > OutputImageType_2D;
-	typedef itk::ImageSeriesWriter< InternalImageType_3D, OutputImageType_2D > SeriesWriterType;
+  typedef signed short OutputPixelType;
+  const unsigned int OutputDimension = 2;
+  typedef itk::Image< OutputPixelType, OutputDimension > OutputImageType_2D;
+  typedef itk::ImageSeriesWriter< InternalImageType_3D, OutputImageType_2D > SeriesWriterType;
 
-  //define vectors for storing image sizes, etc.
-	typedef itk::Vector<double, 3> VectorType;
-	typedef itk::Vector<int, 3> VectorTypeInt;
-	std::vector<float> maskPixelValues_shrunk; //vector to store pixel values corresponding to mask == 1
+  std::cerr << "Reading images..." << std::endl;
+  std::cerr << std::endl;
 
-  /* ============================== Read DICOM Images ============================== */
-	std::cerr << "Reading images..." << std::endl;
-	std::cerr << std::endl;
-
-	//get and check # of input files & filenames
-	NamesGeneratorType::Pointer namesGenerator = NamesGeneratorType::New();
-	namesGenerator->SetInputDirectory( argv[1] );
-	const ReaderType::FileNamesContainer & inputFilenames = namesGenerator->GetInputFileNames();
-	unsigned int numberOfInputFilenames =  inputFilenames.size();
-	std::cerr << "Total # of files in Input Dicom Directory: " << numberOfInputFilenames << std::endl;
+  //get and check # of input files & filenames
+  NamesGeneratorType::Pointer namesGenerator = NamesGeneratorType::New();
+  namesGenerator->SetInputDirectory( argv[1] );
+  const ReaderType::FileNamesContainer & inputFilenames = namesGenerator->GetInputFileNames();
+  unsigned int numberOfInputFilenames =  inputFilenames.size();
+  std::cerr << "Total # of files in Input Dicom Directory: " << numberOfInputFilenames << std::endl;
 
   std::cerr << std::endl;
-	if(numberOfInputFilenames == 0)
-		return EXIT_FAILURE;
+  if(numberOfInputFilenames == 0)
+  	return EXIT_FAILURE;
 
-	//read in images
-	ImageIOType::Pointer gdcmIO = ImageIOType::New();
-	ReaderType::Pointer reader = ReaderType::New();
-	reader->SetImageIO( gdcmIO );
-	reader->SetFileNames( inputFilenames );
-	try
-	{
-		reader->Update();
-	}
-	catch (itk::ExceptionObject &excp)
-	{
-		std::cerr << "Exception thrown while reading the series!" << std::endl;
-		std::cerr << excp << std::endl;
-		return EXIT_FAILURE;
-	}
+  //read in images
+  ImageIOType::Pointer gdcmIO = ImageIOType::New();
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetImageIO( gdcmIO );
+  reader->SetFileNames( inputFilenames );
+  try
+  {
+  	reader->Update();
+  }
+  catch (itk::ExceptionObject &excp)
+  {
+  	std::cerr << "Exception thrown while reading the series!" << std::endl;
+  	std::cerr << excp << std::endl;
+  	return EXIT_FAILURE;
+  }
 
   //define image properties (e.g., size and dimensions) to write out images correctly later
   InternalImageType_3D::RegionType inputRegion;
@@ -107,9 +100,9 @@ int main( int argc, char *argv[])
   confidenceConnectedFilter->SetInitialNeighborhoodRadius(3);
   confidenceConnectedFilter->SetMultiplier(3);
   confidenceConnectedFilter->SetNumberOfIterations(2);
-  confidenceConnectedFilter->SetReplaceValue(255);
+  confidenceConnectedFilter->SetReplaceValue(3000);
 
-  // convert seed point
+  //convert seed point
   typedef itk::MetaDataDictionary                  DictionaryType;
   typedef itk::MetaDataDictionary *                DictionaryRawPointer;
   typedef std::vector< DictionaryRawPointer > DictionaryArrayType;
@@ -123,15 +116,14 @@ int main( int argc, char *argv[])
   int frontEndIndex_z = atoi(argv[5]);
   int countIndexZ = 0;
   int itkIndexZ = 0;
-  bool breakWhileLoop = false;
-  for( DictionaryArrayType::const_iterator it = dictionaryArrayPointer->begin(); it != dictionaryArrayPointer->end(); ++it) {
+  bool done = false;
+  for( DictionaryArrayType::const_iterator it = dictionaryArrayPointer->begin(); it != dictionaryArrayPointer->end() && !done ; ++it) {
     DictionaryRawPointer drp = *it;
     DictionaryType::ConstIterator itr = drp->Begin();
     DictionaryType::ConstIterator end = drp->End();
     while( itr != end ){
       itk::MetaDataObjectBase::Pointer entry = itr->second;
       MetaDataStringType::Pointer entryvalue = dynamic_cast<MetaDataStringType *>( entry.GetPointer() );
-
       if( entryvalue ){
         std::string tagkey = itr->first;
         std::string tagvalue = entryvalue->GetMetaDataObjectValue();
@@ -139,24 +131,18 @@ int main( int argc, char *argv[])
           if (frontEndIndex_z == atoi(tagvalue.c_str())) {
             std::cout << tagkey <<  " = " << tagvalue << std::endl;
             std::cout << "===============" << std::endl;
-            breakWhileLoop = true;
             itkIndexZ = countIndexZ;
+            done = true;
             break;
           }
           countIndexZ++;
         }
       }
-      if(breakWhileLoop){
-        break;
-      }
       ++itr;
     }
-	}
-  // for(int i=0; i<inputFilenames.size(); i++){
-  //   std::cout << "dicome file name: " << inputFilenames[i] << std::endl;
-  // }
+  }
 
-  // Set seed
+  //set seed
   InternalImageType_3D::IndexType seed;
   seed[0] = atoi(argv[3]);
   seed[1] = atoi(argv[4]);
@@ -166,8 +152,9 @@ int main( int argc, char *argv[])
   std::cerr << "Final Seed Coordinate Z: " << seed[2] << std::endl;
   confidenceConnectedFilter->SetSeed(seed);
   confidenceConnectedFilter->SetInput(reader->GetOutput());
+  confidenceConnectedFilter->Update();
 
-  //write out the bias corrected image
+  //write out image segmentation result
   itksys::SystemTools::MakeDirectory( argv[2] );
   SeriesWriterType::Pointer seriesWriter = SeriesWriterType::New();
   seriesWriter->SetInput( confidenceConnectedFilter->GetOutput() );
@@ -179,11 +166,7 @@ int main( int argc, char *argv[])
   if(numberOfOutputFilenames == 0 || numberOfOutputFilenames != numberOfInputFilenames)
     return EXIT_FAILURE;
   seriesWriter->SetFileNames( outputFilenames );
-  // have to use this to save the modified DICOM tag
-  // this can fix the Series Number problem, but other tags are not kept
   seriesWriter->SetImageIO( gdcmIO );
-
-  // use this will keep all the original DICOM tags
   seriesWriter->SetMetaDataDictionaryArray( reader->GetMetaDataDictionaryArray() );
   try
   {
@@ -196,5 +179,6 @@ int main( int argc, char *argv[])
     return EXIT_FAILURE;
   }
 
+  std::cout << "Simple Region Growing is done." << std::endl;
   return EXIT_SUCCESS;
 }
