@@ -1,3 +1,5 @@
+# Copyright (c) General Electric Company, 2017.  All rights reserved.
+
 FROM rt106/rt106-algorithm-sdk
 
 # add the artifacts emitted from the dev container

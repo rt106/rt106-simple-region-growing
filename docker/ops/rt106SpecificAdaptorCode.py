@@ -1,3 +1,5 @@
+# Copyright (c) General Electric Company, 2017.  All rights reserved.
+
 # Rt 106 algorithm wrapper for rt106-simple-region-growing
 
 import os, glob, uuid, time, logging, subprocess
