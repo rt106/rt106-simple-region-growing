@@ -21,7 +21,7 @@ emit the artifact as a tarball
 
 ```sh
 $ cd docker
-$ docker run rt106-dev/rt106-simple-region-growing > ops/SimpleRegionGrowing.tar.gz
+$ docker run rt106-dev/rt106-simple-region-growing > ops/rt106-simple-region-growing.tar.gz
 ```
 
 To build the ```ops``` container

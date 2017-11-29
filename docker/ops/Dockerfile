@@ -3,10 +3,10 @@
 FROM rt106/rt106-algorithm-sdk
 
 # add the artifacts emitted from the dev container
-ADD simpleRegionGrowing.tar.gz /rt106/bin
+ADD rt106-simple-region-growing.tar.gz /rt106/bin
 
 # add the adaptor code specialized for this algorithm
-ADD rt106SpecificAdaptorCode.py rt106SpecificAdaptorDefinitions.json /rt106/
+ADD rt106SpecificAdaptorCode.py rt106SpecificAdaptorDefinitions.json entrypoint.sh /rt106/
 
 # set permissions
 USER root
