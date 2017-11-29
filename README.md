@@ -1,6 +1,6 @@
 # rt106-simple-region-growing
 
-__Copyright (c) General Electric Company, 2017.  All rights reserved.__
+_Copyright (c) General Electric Company, 2017.  All rights reserved._
 
 This is an example analytic for Rt 106. This analytic demonstrates how to use the rt106-algorithm-sdk around an [ITK](http://www.itk.org) algorithm. This analytic  is based on the ITK [ConfidenceConnectedImageFilter Example](https://itk.org/Wiki/ITK/Examples/ImageSegmentation/ConfidenceConnectedImageFilter), extended to support 3 dimensions and DICOM images.
 
