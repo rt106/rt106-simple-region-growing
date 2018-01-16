@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: debian:stretch
+    steps:
+      - checkout
+      - run:
+          name: Build Dev
+          command: cd docker; docker build -t rt106-dev/rt106-simple-region-growing dev
+      - run:
+          name: Copy artifact
+          command: cd docker; docker run rt106-dev/rt106-simple-region-growing > ops/rt106-simple-region-growing.tar.gz
+      - run:
+          name: Build ops
+          command: cd docker; docker build -t rt106/rt106-simple-region-growing ops
