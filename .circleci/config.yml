@@ -1,9 +1,11 @@
 version: 2
 jobs:
   build:
-    machine: true
+    docker:
+      - image: docker:17.12.0-ce-git
     steps:
       - checkout
+      - setup_remote_docker
       - run: |
           cd docker
           docker build -t rt106-dev/rt106-simple-region-growing dev
