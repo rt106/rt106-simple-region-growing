@@ -10,12 +10,12 @@ jobs:
           name: Build dev image, builds the artifacts that will be put in the ops (runtime) image
           command: |
             cd docker
-            #docker build -t rt106-dev/rt106-simple-region-growing dev
+            docker build -t rt106-dev/rt106-simple-region-growing dev
       - run:
           name: Copy artifact out of the dev image
           command: |
             cd docker
-            #docker run rt106-dev/rt106-simple-region-growing > ops/rt106-simple-region-growing.tar.gz
+            docker run rt106-dev/rt106-simple-region-growing > ops/rt106-simple-region-growing.tar.gz
       - run:
           name: Define the tag for runtime Docker image
           command: |
@@ -23,15 +23,14 @@ jobs:
       - run:
           name: Build the ops image, this is the runtime image
           command: |
-            cat $BASH_ENV
             source $BASH_ENV
-            echo $DOCKER_TAG
+            echo "Tagging runtime image with $DOCKER_TAG"
             cd docker
-            #docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
+            docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
       - deploy:
           name: Deploy runtime image to Docker Hub/Cloud
           command: |
             source $BASH_ENV
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
             docker push rt106/rt106-simple-region-growing:$DOCKER_TAG
-            if [ x$TAG_LATEST == "xtrue" ]; then docker tag rt106/rt106-simple-region-growing:$DOCKER_TAG rt106/rt106-simple-region-growing:latest; docker push rt106/rt106-simple-region-growing:latest; fi
+            if [ x$TAG_LATEST == "xtrue" ]; then echo "Tagging runtime image also with 'latest'"; docker tag rt106/rt106-simple-region-growing:$DOCKER_TAG rt106/rt106-simple-region-growing:latest; docker push rt106/rt106-simple-region-growing:latest; fi
