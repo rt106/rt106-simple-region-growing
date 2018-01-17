@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Define the tag for runtime Docker image
           command: |
-            if [ x$DOCKER_TAG == "x" ]; then if [ x$MAJOR != "x" -a x$MINOR != "x" -a x$PATCH != "x"]; then echo 'export DOCKER_TAG=$MAJOR.$MINOR.$PATCH-$CIRCLE_BUILD_NUM' >> $BASH_ENV ; else echo 'export DOCKER_TAG=unversioned-$CIRCLE_BUILD_NUM' >> $BASH_ENV ; fi ; fi
+            if [ x$DOCKER_TAG == "x" ]; then if [ x$MAJOR != "x" -a x$MINOR != "x" -a x$PATCH != "x" ]; then echo 'export DOCKER_TAG=$MAJOR.$MINOR.$PATCH-$CIRCLE_BUILD_NUM' >> $BASH_ENV ; else echo 'export DOCKER_TAG=unversioned-$CIRCLE_BUILD_NUM' >> $BASH_ENV ; fi ; fi
       - run:
           name: Build the ops image, this is the runtime image
           command: |
