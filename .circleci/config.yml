@@ -22,5 +22,6 @@ jobs:
           docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
       - deploy:
           command: |
+            source $BASH_ENV
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
             docker push rt106/rt106-simple-region-growing:$DOCKER_TAG
