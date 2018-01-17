@@ -32,4 +32,4 @@ jobs:
             source $BASH_ENV
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
             docker push rt106/rt106-simple-region-growing:$DOCKER_TAG
-            if [ -n $TAG_LATEST ]; then docker tag rt106/rt106-simple-region-growing:$DOCKER_TAG rt106/rt106-simple-region-growing:latest; docker push rt106/rt106-simple-region-growing:latest; fi
+            if [ x$TAG_LATEST == "xtrue" ]; then docker tag rt106/rt106-simple-region-growing:$DOCKER_TAG rt106/rt106-simple-region-growing:latest; docker push rt106/rt106-simple-region-growing:latest; fi
