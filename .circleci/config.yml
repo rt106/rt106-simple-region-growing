@@ -6,21 +6,28 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: |
-          cd docker
-          docker build -t rt106-dev/rt106-simple-region-growing dev
-      - run: |
-          cd docker
-          docker run rt106-dev/rt106-simple-region-growing > ops/rt106-simple-region-growing.tar.gz
-      - run: |
-          echo 'export DOCKER_TAG=$MAJOR.$MINOR.$PATCH-$CIRCLE_BUILD_NUM' >> $BASH_ENV
-          source $BASH_ENV
-          echo $DOCKER_TAG
-      - run: |
-          source $BASH_ENV
-          cd docker
-          docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
+      - run:
+          name: Build dev image, builds the artifacts that will be put in the ops (runtime) image
+          command: |
+            cd docker
+            docker build -t rt106-dev/rt106-simple-region-growing dev
+      - run:
+          name: Copy artifact out of the dev image
+          command: |
+            cd docker
+            docker run rt106-dev/rt106-simple-region-growing > ops/rt106-simple-region-growing.tar.gz
+      - run:
+          name: Define the tag for runtime Docker image
+          command: |
+            echo 'export DOCKER_TAG=$MAJOR.$MINOR.$PATCH-$CIRCLE_BUILD_NUM' >> $BASH_ENV
+      - run:
+          name: Build the ops image, this is the runtime image
+          command: |
+            source $BASH_ENV
+            cd docker
+            docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
       - deploy:
+          name: Deploy runtime image
           command: |
             source $BASH_ENV
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
