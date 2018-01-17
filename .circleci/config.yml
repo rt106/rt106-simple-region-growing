@@ -23,6 +23,7 @@ jobs:
       - run:
           name: Build the ops image, this is the runtime image
           command: |
+            cat $BASH_ENV
             source $BASH_ENV
             echo $DOCKER_TAG
             cd docker
