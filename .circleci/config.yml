@@ -27,7 +27,7 @@ jobs:
             cd docker
             docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
       - deploy:
-          name: Deploy runtime image
+          name: Deploy runtime image to Docker Hub/Cloud
           command: |
             source $BASH_ENV
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
