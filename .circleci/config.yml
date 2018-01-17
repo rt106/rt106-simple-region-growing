@@ -6,15 +6,18 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+          docker_layer_caching: true
       - run: |
           cd docker
           docker build -t rt106-dev/rt106-simple-region-growing dev
       - run: |
           cd docker
           docker run rt106-dev/rt106-simple-region-growing > ops/rt106-simple-region-growing.tar.gz
+      - run:
+          echo 'export DOCKER_TAG=$MAJOR.$MINOR.$PATCH-$CIRCLE_BUILD_NUM' >> $BASH_ENV
       - run: |
           cd docker
-          docker build -t rt106/rt106-simple-region-growing:0.1.$CIRCLE_BUILD_NUM ops
+          docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
       - run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-          docker push rt106/rt106-simple-region-growing:0.1.$CIRCLE_BUILD_NUM
+          docker push rt106/rt106-simple-region-growing:$DOCKER_TAG
