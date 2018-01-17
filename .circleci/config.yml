@@ -14,6 +14,8 @@ jobs:
           docker run rt106-dev/rt106-simple-region-growing > ops/rt106-simple-region-growing.tar.gz
       - run:
           echo 'export DOCKER_TAG=$MAJOR.$MINOR.$PATCH-$CIRCLE_BUILD_NUM' >> $BASH_ENV
+          source $BASH_ENV
+          echo $DOCKER_TAG
       - run: |
           cd docker
           docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
