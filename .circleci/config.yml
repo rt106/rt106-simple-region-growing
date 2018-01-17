@@ -6,7 +6,6 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-          docker_layer_caching: true
       - run: |
           cd docker
           docker build -t rt106-dev/rt106-simple-region-growing dev
