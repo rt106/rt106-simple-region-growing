@@ -27,7 +27,7 @@ jobs:
             source $BASH_ENV
             echo $DOCKER_TAG
             cd docker
-            docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
+            #docker build -t rt106/rt106-simple-region-growing:$DOCKER_TAG ops
       - deploy:
           name: Deploy runtime image to Docker Hub/Cloud
           command: |
